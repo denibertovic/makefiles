@@ -26,6 +26,16 @@ init:
 	@terraform get
 	@terraform init
 
+## EXAMPLE: initial terraform plan (makes VPC, subnets, etc)
+# init-plan: require-ENVIRONMENT require-CLUSTER_NAME
+# 	@terraform plan \
+# 		-target="module.vpc" \
+# 		-target="module.public-subnets" \
+# 		-target="module.open-ssh" \
+# 		-target="module.open-egress" \
+# 		-target="module.open-egress" \
+# 		-out=tf.out
+
 ## terraform plan (makes everything)
 plan:
 	@terraform plan -out=tf.out

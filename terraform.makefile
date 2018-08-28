@@ -27,6 +27,16 @@ init: require-ENVIRONMENT
 	@cd ${ENVIRONMENT} && terraform get
 	@cd ${ENVIRONMENT} && terraform init
 
+## EXAMPLE: initial terraform plan (makes VPC, subnets, etc)
+# init-plan: require-ENVIRONMENT require-CLUSTER_NAME
+# 	@cd ${ENVIRONMENT} && terraform plan \
+# 		-target="module.vpc" \
+# 		-target="module.public-subnets" \
+# 		-target="module.open-ssh" \
+# 		-target="module.open-egress" \
+# 		-target="module.open-egress" \
+# 		-out=tf.out
+
 ## terraform plan (makes everything)
 plan: require-ENVIRONMENT
 	@cd ${ENVIRONMENT} && terraform plan -out=tf.out
