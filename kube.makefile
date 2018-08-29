@@ -26,7 +26,8 @@ kops-create-cluster: require-ENVIRONMENT require-CLUSTER_NAME require-VPC_ID req
 	@kops create cluster \
 		--cloud=aws \
 		--kubernetes-version=${KUBERNETES_VERSION} \
-		--networking="flannel-udp" \
+		--authorization=RBAC \
+		--networking="flannel" \
 		--master-size=t2.small \
 		--master-zones=us-east-1a,us-east-1c,us-east-1d \
 		--network-cidr=${VPC_CIDR} \
