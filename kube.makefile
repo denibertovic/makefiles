@@ -22,10 +22,10 @@ create-s3-bucket: require-ENVIRONMENT require-CLUSTER_NAME
 	@aws s3 mb s3://${CLUSTER_NAME}
 
 ## Create cluster with kops. Needs CLUSTER_NAME defined.
-kops-create-cluster: require-ENVIRONMENT require-CLUSTER_NAME require-VPC_ID require-VPC_CIDR require-SSH_PUBLIC_KEY require-NODE_COUNT require-NODE_SIZE require-NODE_VOLUME_SIZE
+kops-create-cluster: require-ENVIRONMENT require-CLUSTER_NAME require-VPC_ID require-VPC_CIDR require-SSH_PUBLIC_KEY require-NODE_COUNT require-NODE_SIZE require-NODE_VOLUME_SIZE require-KUBERNETES_VERSION
 	@kops create cluster \
 		--cloud=aws \
-		--kubernetes-version=1.8.3 \
+		--kubernetes-version=${KUBERNETES_VERSION} \
 		--networking="flannel-udp" \
 		--master-size=t2.small \
 		--master-zones=us-east-1a,us-east-1c,us-east-1d \
