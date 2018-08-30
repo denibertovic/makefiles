@@ -1,6 +1,6 @@
 .PHONY: kops-create-cluster kops-edit-cluster kops-update-cluster \
 	kops-validate-cluster create-s3-bucket generate-ssh-keypair fetch-keys \
-	kops-rolling-update
+	kops-rolling-update fetch-keys
 
 .DEFAULT_GOAL = help
 
@@ -75,6 +75,11 @@ import-ssh-keypair: require-ENVIRONMENT require-CLUSTER_NAME
 ## Fetch kubeconfig.yaml
 fetch-kubeconfig: require-ENVIRONMENT require-CLUSTER_NAME
 	@KUBECONFIG=${ENVIRONMENT}/kubeconfig.yaml kops export kubecfg --name ${CLUSTER_NAME} --state s3://${CLUSTER_NAME}
+
+## Fetch private/public ssh keys from pw store
+fetch-keys: require-ENVIRONMENT require-CLUSTER_NAME
+	@pass clusters/${CLUSTER_NAME}/keys/admin.pem > ${ENVIRONMENT}/${CLUSTER_NAME}-admin.pem
+	@pass clusters/${CLUSTER_NAME}/keys/admin.pem.pub > ${ENVIRONMENT}/${CLUSTER_NAME}-admin.pem.pub
 
 ## Show help screen.
 help:
