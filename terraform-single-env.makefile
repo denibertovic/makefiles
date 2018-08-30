@@ -3,7 +3,7 @@
 
 .DEFAULT_GOAL = help
 
-ADMIN_KEY_PREFIX ?= myproject
+export PASSWORD_STORE_DIR ?= ${PWD}/../password-store
 
 # Hardcoding value of 3 minutes when we check if the plan file is stale
 STALE_PLAN_FILE := `find "tf.out" -mmin -3 | grep -q tf.out`
@@ -51,12 +51,30 @@ clean:
 	@rm -f terraform.*.backup
 
 ## Generate new ssh keypair.
-generate-ssh-keypair: require-ADMIN_KEY_PREFIX
-	@ssh-keygen -t rsa -b 4096 -f ${ADMIN_KEY_PREFIX}-admin.pem -C "${ADMIN_KEY_PREFIX}-admin"
+generate-ssh-keypair: require-CLUSTER_NAME
+	@ssh-keygen -t rsa -b 4096 -f ${CLUSTER_NAME}-admin.pem -C "${CLUSTER_NAME}-admin"
 
 ## Import keypair into aws
-import-ssh-keypair: require-ADMIN_KEY_PREFIX
-	@aws ec2 import-key-pair --key-name ${ADMIN_KEY_PREFIX}-admin --region us-east-1 --public-key-material "`cat ${ADMIN_KEY_PREFIX}-admin.pem.pub)`"
+import-ssh-keypair: require-CLUSTER_NAME
+	@aws ec2 import-key-pair --key-name ${CLUSTER_NAME}-admin --region us-east-1 --public-key-material "`cat ${CLUSTER_NAME}-admin.pem.pub)`"
+
+## Saves admin keys to password store
+save-ssh-keys: require-CLUSTER_NAME require-PASSWORD_STORE_DIR
+	@pass insert -f -m clusters/${CLUSTER_NAME}/keys/admin.pem<${CLUSTER_NAME}-admin.pem
+	@pass insert -f -m clusters/${CLUSTER_NAME}/keys/admin.pem.pub<${CLUSTER_NAME}-admin.pem.pub
+
+## Saves terraform.tfvars to password store
+save-vars: require-CLUSTER_NAME require-PASSWORD_STORE_DIR
+	@pass insert -f -m tfvars/${CLUSTER_NAME}.tfvars<terraform.tfvars
+
+## Fetch terraform.tfvars from password store
+fetch-vars: require-CLUSTER_NAME require-PASSWORD_STORE_DIR
+	@pass tfvars/${CLUSTER_NAME}.tfvars > terraform.tfvars
+
+## Fetch ssh public and private key from pw store
+fetch-ssh-keys: require-CLUSTER_NAME require-PASSWORD_STORE_DIR
+	@pass clusters/${CLUSTER_NAME}/keys/admin.pem > ${CLUSTER_NAME}-admin.pem
+	@pass clusters/${CLUSTER_NAME}/keys/admin.pem > ${CLUSTER_NAME}-admin.pem.pub
 
 ## Show help screen.
 help:
