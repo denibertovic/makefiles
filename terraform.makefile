@@ -3,7 +3,7 @@
 
 .DEFAULT_GOAL = help
 
-export PASSWORD_STORE_DIR ?= ${PWD}/../../password-store
+export PASSWORD_STORE_DIR ?= ${PWD}/../password-store
 
 # Hardcoding value of 3 minutes when we check if the plan file is stale
 STALE_PLAN_FILE := `find "tf.out" -mmin -3 | grep -q tf.out`
