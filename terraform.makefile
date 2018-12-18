@@ -41,7 +41,7 @@ plan: require-ENVIRONMENT
 	@cd ${ENVIRONMENT} && terraform plan -out=tf.out
 
 ## terraform apply
-apply: crequire-ENVIRONMENT heck-plan-file
+apply: require-ENVIRONMENT check-plan-file
 	@cd ${ENVIRONMENT} && terraform apply tf.out
 
 ## Cleans current dir from uneeded files
