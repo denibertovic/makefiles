@@ -6,7 +6,7 @@
 export PASSWORD_STORE_DIR ?= ${PWD}/../password-store
 
 # Hardcoding value of 3 minutes when we check if the plan file is stale
-STALE_PLAN_FILE := `find "tf.out" -mmin -3 | grep -q tf.out`
+STALE_PLAN_FILE := `find "${ENVIRONMENT}/tf.out" -mmin -3 | grep -q tf.out`
 
 require-%:
 	@ if [ "${${*}}" = "" ]; then \
@@ -54,7 +54,7 @@ clean: require-ENVIRONMENT
 generate-ssh-keypair: require-ENVIRONMENT require-CLUSTER_NAME
 	@cd ${ENVIRONMENT} && ssh-keygen -t rsa -b 4096 -f ${CLUSTER_NAME}-admin.pem -C "${CLUSTER_NAME}-admin"
 ## Import keypair into aws
-import-ssh-keypair: require-ENVIRONMENT require-ADMIN_KEY_PREFIX
+import-ssh-keypair: require-ENVIRONMENT require-CLUSTER_NAME
 	@cd ${ENVIRONMENT} && aws ec2 import-key-pair --key-name ${CLUSTER_NAME}-admin --region us-east-1 --public-key-material "`cat ${CLUSTER_NAME}-admin.pem.pub)`"
 
 ## Saves admin keys to password store
