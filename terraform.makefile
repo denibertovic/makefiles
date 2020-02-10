@@ -78,7 +78,7 @@ fetch-ssh-keys: require-ENVIRONMENT require-CLUSTER_NAME require-PASSWORD_STORE_
 ## Show help screen.
 help:
 	@echo "Please use \`make <target>' where <target> is one of\n\n"
-	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
+	@awk '/^[a-zA-Z\-0-9_]+:/ { \
 		helpMessage = match(lastLine, /^## (.*)/); \
 		if (helpMessage) { \
 			helpCommand = substr($$1, 0, index($$1, ":")-1); \
